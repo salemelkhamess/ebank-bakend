@@ -17,6 +17,7 @@ public class AccountOperation {
     private Long id;
     private Date operationDate;
     private double amount;
+    private String description;
     @ManyToOne
     private BankAccount bankAccount;
 
@@ -53,5 +54,13 @@ public class AccountOperation {
 
     public void setOperationType(OperationType operationType) {
         this.operationType = operationType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

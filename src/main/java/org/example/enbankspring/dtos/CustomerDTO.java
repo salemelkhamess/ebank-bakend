@@ -1,21 +1,18 @@
-package org.example.enbankspring.entities;
+package org.example.enbankspring.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.example.enbankspring.entities.BankAccount;
 
 import java.util.List;
 
-@Entity
-@NoArgsConstructor @AllArgsConstructor
-public class Customer {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+public class CustomerDTO {
     private  Long id;
     private String name;
     private String email;
-    @OneToMany (mappedBy = "customer" )
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    List<BankAccount> bankAccounts;
 
     public Long getId() {
         return id;
@@ -41,11 +38,4 @@ public class Customer {
         this.email = email;
     }
 
-    public List<BankAccount> getBankAccounts() {
-        return bankAccounts;
-    }
-
-    public void setBankAccounts(List<BankAccount> bankAccounts) {
-        this.bankAccounts = bankAccounts;
-    }
 }
