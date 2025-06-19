@@ -1,5 +1,9 @@
 package org.example.enbankspring;
 
+import org.example.enbankspring.dtos.BankAccountDTO;
+import org.example.enbankspring.dtos.CurrentBankAccountDTO;
+import org.example.enbankspring.dtos.CustomerDTO;
+import org.example.enbankspring.dtos.SavingBankAccountDTO;
 import org.example.enbankspring.entities.*;
 import org.example.enbankspring.enums.AccountEnum;
 import org.example.enbankspring.enums.OperationType;
@@ -32,7 +36,7 @@ public class EnbankSpringApplication {
     CommandLineRunner commandLineRunner(BankAccountService bankAccountService) {
         return args -> {
             Stream.of("Salem" , "Hassen" , "Minetou").forEach(name -> {
-                Customer customer = new Customer();
+                CustomerDTO customer = new CustomerDTO();
                 customer.setName(name);
                 customer.setEmail(name + "@gmail.com");
                 bankAccountService.createCustomer(customer);
@@ -42,20 +46,29 @@ public class EnbankSpringApplication {
                 try {
                     bankAccountService.saveCurrentBankAccount(Math.random()*90000,9000,customer.getId());
                     bankAccountService.saveSavingBankAccount(Math.random()*120000,5.5,customer.getId());
-                    List<BankAccount> bankAccountList = bankAccountService.bankAccountList();
-                    for (BankAccount bankAccount : bankAccountList) {
-                        bankAccountService.credit(bankAccount.getId() ,"Credit" ,10000 + Math.random()*12000);
-                        bankAccountService.debit(bankAccount.getId() ,"Debit" ,1000 + Math.random()*9000);
 
-                    }
                 } catch (CustomerNotFoundException e) {
                     e.printStackTrace();
-                } catch (BankAccountNotFoudException e) {
-                    throw new RuntimeException(e);
-                } catch (AccountBalanceInsiffisantException e) {
-                    throw new RuntimeException(e);
                 }
             });
+
+            List<BankAccountDTO> bankAccountList = bankAccountService.bankAccountList();
+            String accountId;
+            for (BankAccountDTO bankAccount : bankAccountList) {
+                for (int i = 0; i <10; i++) {
+                    if (bankAccount instanceof SavingBankAccountDTO){
+                        accountId = ((SavingBankAccountDTO) bankAccount).getId();
+                    }else {
+                        accountId = ((CurrentBankAccountDTO) bankAccount).getId();
+
+                    }
+
+                    bankAccountService.credit(accountId ,"Credit" ,10000 + Math.random()*12000);
+                    bankAccountService.debit(accountId,"Debit" ,1000 + Math.random()*9000);
+                }
+
+            }
+
         };
     }
 
