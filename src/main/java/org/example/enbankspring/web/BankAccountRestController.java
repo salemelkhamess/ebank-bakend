@@ -1,18 +1,15 @@
 package org.example.enbankspring.web;
 
-import org.example.enbankspring.dtos.AccountHistoryDTO;
-import org.example.enbankspring.dtos.AccountOperationDTO;
-import org.example.enbankspring.dtos.BankAccountDTO;
+import org.example.enbankspring.dtos.*;
+import org.example.enbankspring.exceptions.AccountBalanceInsiffisantException;
 import org.example.enbankspring.exceptions.BankAccountNotFoudException;
 import org.example.enbankspring.services.BankAccountService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class BankAccountRestController {
     private final BankAccountService bankAccountService;
     public BankAccountRestController(BankAccountService bankAccountService) {
@@ -39,5 +36,22 @@ public class BankAccountRestController {
         return bankAccountService.getAccountHistory(id ,page ,size);
     }
 
+    @PostMapping("/account/debiter")
+    public DebitDTO debiter(@RequestBody DebitDTO debitDTO) throws BankAccountNotFoudException, AccountBalanceInsiffisantException {
+        bankAccountService.debit(debitDTO.getAccountID() ,debitDTO.getDescription(),debitDTO.getAmount());
+        return debitDTO;
+    }
+
+    @PostMapping("/account/crediter")
+    public CreditDTO crediter(@RequestBody CreditDTO creditDTO) throws BankAccountNotFoudException, AccountBalanceInsiffisantException {
+        bankAccountService.credit(creditDTO.getAccountID() ,creditDTO.getDescription(),creditDTO.getAmount());
+        return creditDTO;
+    }
+
+
+    @PostMapping("/account/virement")
+    public void virement(@RequestBody TransfereRequestDTO transfereRequestDTO) throws BankAccountNotFoudException, AccountBalanceInsiffisantException {
+        this.bankAccountService.transfer(transfereRequestDTO.getAccountSource() , transfereRequestDTO.getAccountDest(),transfereRequestDTO.getAmount());
+    }
 
 }

@@ -219,7 +219,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             throw new BankAccountNotFoudException("Id not fount");
         }
 
-        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountId(id, PageRequest.of(page, size));
+        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountIdOrderByOperationDateDesc(id, PageRequest.of(page, size));
         AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
         List<AccountOperationDTO> accountOperationDTOList = accountOperations.getContent().stream().map(op -> bankAccountMapper.fromAccountOperation(op)).collect(Collectors.toList());
 
@@ -232,6 +232,14 @@ public class BankAccountServiceImpl implements BankAccountService {
 
 
         return accountHistoryDTO;
+    }
+
+    @Override
+    public List<CustomerDTO> searchCustomer(String search) {
+        List<Customer> customerList = customerRepository.searchCustomer(search);
+        List<CustomerDTO> customerDto = customerList.stream().map(customer -> bankAccountMapper.fromCustomer(customer)).collect(Collectors.toList());
+
+        return customerDto;
     }
 
 
